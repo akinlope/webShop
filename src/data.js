@@ -20,3 +20,7 @@ module.exports.data = [
     price: 3500,
   },
 ];
+
+module.exports.tempArray = [
+  
+]

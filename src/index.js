@@ -1,4 +1,5 @@
 const { data } = require("./data");
+const { tempArray } = require("./data");
 
 const addBtn = document.querySelectorAll(".add");
 const subBtn = document.querySelectorAll(".sub");
@@ -6,12 +7,8 @@ const span = document.querySelectorAll("span");
 const price = document.querySelectorAll(".price");
 const approve = document.querySelectorAll(".approve");
 const proceed = document.querySelector(".proceed");
-const h2 = document.querySelectorAll("h2");
+const foodPrice = document.querySelector(".foodPrice");
 const finalPrice = document.querySelector(".finalPrice");
-
-// console.log(removeBtn);
-
-// const foodPriceContainer = document.querySelector(".foodPrice")
 
 function add() {
   for (let i = 0; i < addBtn.length; i++) {
@@ -47,54 +44,87 @@ function sub() {
 }
 sub();
 
-let arr = [];
-function buy() {
-  for (let i = 0; i < approve.length; i++) {
-    approve[i].addEventListener("click", () => {
-      /*Usinf JavaScript to create the DOM and adding class to them*/
-      let holder = document.createElement("div");
-      holder.classList.add(".foodPrice"); /*foodPrice*/
-      let p = document.createElement("p");
-      p.classList.add("foodName");
-      let textHolder = document.createTextNode(h2[i].innerHTML);
-      let p1 = document.createElement("p");
-      p1.classList.add("foodNamePrice");
-      let priceHolder = document.createTextNode(parseInt(price[i].innerHTML));
-      let p2 = document.createElement("p");
-      let removeHolder = document.createTextNode("Delete");
-      p2.classList.add("removeBtn");
+const itemsArr = [];
+const totalPriceArr = [];
 
-      /*Appending the DOM to each other*/
-      p.append(textHolder);
-      p1.append(priceHolder);
-      p2.append(removeHolder);
-      holder.appendChild(p);
-      holder.appendChild(p1);
-      holder.appendChild(p2);
-      document.querySelector(".foodPrice").appendChild(holder);
 
-      /*to display the total amount of the product to the user*/
-      arr.push(data[i].price);
-      let sum = 0;
-      for (let i = 0; i < arr.length; i++) {
-        sum = sum + arr[i];
-        // console.log(sum);
-        finalPrice.innerHTML = sum;
+
+/* buy button event listener*/
+for (let x = 0; x < approve.length; x++) {
+  approve[x].addEventListener("click", () => {
+    itemsArr.push({
+      id: data[x].id,
+      name: data[x].name,
+      price: price[x].innerHTML,
+    });
+
+    createElements(itemsArr);
+    // console.log(itemsArr[x].price);
+
+    totalPriceArr.push(parseInt(price[x].innerHTML));
+    // console.log(totalPriceArr);
+    let sum = 0;
+    for (let i = 0; i < totalPriceArr.length; i++) {
+      sum = sum + totalPriceArr[i];
+      // console.log(sum);
+    }
+    // console.log(sum);
+
+    finalPrice.innerHTML = sum;
+  });
+}
+
+// console.log(itemsArr);
+/* to create the elements holding the price, name and remove btn after user clicks BUY*/
+function createElements(params) {
+  /*map the data from the array*/
+  const dataResult = params.map(({ id, name, price }) => {
+    return `<p class="foodName" id=${id}>${name}</p>
+    <p class="foodNamePrice">${price}</p>
+    <p class="removeBtn">Delete</p>`;
+  });
+ 
+
+  /*remove the comma in between the element (log dataResult to see the comma) */
+
+  const theHTML = dataResult.join(" ");
+  /* send the new data to the html element */
+  foodPrice.innerHTML = theHTML;
+
+  /* get the delete element after it has been sent to the webshop */
+  const deleteBtn = document.querySelectorAll(".removeBtn");
+  for (let x = 0; x < deleteBtn.length; x++) {
+    deleteBtn[x].addEventListener("click", () => {
+      console.log();
+      /* 
+      
+        having issue here, when the user delete a an item from the 
+        buy list it should subtract the price from the total price.
+      
+      */
+
+      if (deleteBtn[x] !== itemsArr.id) {
+        itemsArr.splice(x, 1);
+        // console.log(itemsArr.price)
+
+        createElements(itemsArr);
+
+        totalPriceArr.push(parseInt(price[x].innerHTML));
+      }
+      for (let i = 0; i < price.length; i++) {
+        // console.log(price);
       }
     });
   }
 }
-buy();
 
-const removeBtn = document.querySelectorAll(".removeBtn");
-function remove() {
-  for (let i = 0; i < removeBtn.length; i++) {
-    if (removeBtn[i].classList.contains(".removeBtn")) {
-      console.log("remove button  is clicked");
-    }
-  }
-}
-remove();
+// function remove() {
+//   // console.log(removeBtn);
+//   for (let i = 0; i < removeBtn.length; i++) {
+//      console.log("remove button  is clicked");
+//   }
+// }
+// remove();
 
 function btnProceed() {
   proceed.addEventListener("click", (e) => {
@@ -120,3 +150,9 @@ btnProceed();
 //   }
 // }
 // buy()
+
+// let arr = [100,200,300,400,500]
+// let see = arr[2].shift()
+
+// let sum = [5000] - 2000
+// console.log(sum);
